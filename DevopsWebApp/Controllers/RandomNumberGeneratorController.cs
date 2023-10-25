@@ -16,7 +16,7 @@ namespace DevopsWebApp.Controllers
         [HttpGet("random/{upperLimit}")]
         public uint Get(uint upperLimit)
         {
-            return new RandomNumberGenerator(upperLimit ).RandomNumber;
+            return new RandomNumberGenerator(upperLimit).RandomNumber;
         }
 
         [HttpGet("random/{lowerLimit}&{upperLimit}")]
