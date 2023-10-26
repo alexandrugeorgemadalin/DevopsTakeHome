@@ -1,7 +1,15 @@
+using DevopsWebApp.Controllers;
+
 namespace DevopsWebApp.Test
 {
     public class RandomNumberGeneratorControllerTest
     {
+        readonly RandomNumberGeneratorController _controller;
+
+        public RandomNumberGeneratorControllerTest()
+        { 
+            _controller = new RandomNumberGeneratorController();
+        }
 
         [Fact]
         public void Get_Random_Number()
@@ -9,11 +17,9 @@ namespace DevopsWebApp.Test
             //Arrange
 
             //Act
-            var randomNumberGenerator = new RandomNumberGenerator();
-            var randomNumber = randomNumberGenerator.RandomNumber;
+            var randomNumber = _controller.Get();
 
             //Assert
-            Assert.NotNull(randomNumberGenerator);
             Assert.IsType<uint>(randomNumber);
             Assert.InRange<uint>(randomNumber, 0, Int32.MaxValue);
         }
@@ -25,11 +31,9 @@ namespace DevopsWebApp.Test
             uint upperLimit = 50;
 
             //Act
-            var randomNumberGenerator = new RandomNumberGenerator(upperLimit);
-            var randomNumber = randomNumberGenerator.RandomNumber;
+            var randomNumber = _controller.Get(upperLimit);
 
             //Assert
-            Assert.NotNull(randomNumberGenerator);
             Assert.IsType<uint>(randomNumber);
             Assert.InRange<uint>(randomNumber, 0, upperLimit);
         }
@@ -42,11 +46,9 @@ namespace DevopsWebApp.Test
             uint upperLimit = 200;
 
             //Act
-            var randomNumberGenerator = new RandomNumberGenerator(lowerLimit, upperLimit);
-            var randomNumber = randomNumberGenerator.RandomNumber;
+            var randomNumber = _controller.Get(lowerLimit, upperLimit);
 
             //Assert
-            Assert.NotNull(randomNumberGenerator);
             Assert.IsType<uint>(randomNumber);
             Assert.InRange<uint>(randomNumber, lowerLimit, upperLimit);
         }
