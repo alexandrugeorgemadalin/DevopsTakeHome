@@ -39,11 +39,21 @@ jobs:
       if: always() && steps.dotnet-test.outcome == 'success'
       run: dotnet publish -c Release -p DevopsWebApp --property:PublishDir='${{ github.workspace }}/DevopsTakeHomePackage'
       working-directory: ${{ github.workspace}}/DevopsWebApp
-  
-    - name: Upload package artifact
-      id: upload-artifact
+        
+    - name: Zip package
+      id: zip-package
       if: always() && steps.dotnet-create-package.outcome == 'success'
-      uses: actions/upload-artifact@v3
+      run: zip -r ${{ github.workspace}}/DevopsWebApp.zip ${{ github.workspace }}/DevopsTakeHomePackage
+
+    - name: Configure AWS Credentials
+      id: configure-aws
+      uses: aws-actions/configure-aws-credentials@v3
+      if: always() && steps.zip-package.outcome == 'success'
       with:
-        name: DevopsTakeHomePackage
-        path: '${{ github.workspace}}/DevopsTakeHomePackage'
+        aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Copy package to S3
+      if: always() && steps.configure-aws.outcome == 'success'
+      run: aws s3 cp ${{ github.workspace}}/DevopsWebApp.zip s3://${{ vars.AWS_BUCKET }}/
