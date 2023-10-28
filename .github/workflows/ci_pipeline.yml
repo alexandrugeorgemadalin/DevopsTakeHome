@@ -12,7 +12,7 @@ on:
   
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -38,18 +38,11 @@ jobs:
       id: dotnet-create-package
       if: always() && steps.dotnet-test.outcome == 'success'
       run: dotnet publish -c Release --property:PublishDir=DevopsTakeHomePackage
-    
-    # - name: Zip the package
-    #   id: zip-package
-    #   if: always() && steps.dotnet-create-package.outcome == 'success'
-    #   uses: montudor/action-zip@v1
-    #   with:
-    #     args: zip -qq -r DevopsTakeHomePackage.zip DevopsTakeHomePackage
-    
+  
     - name: Upload zip artifact
       id: upload-artifact
       if: always() && steps.dotnet-create-package.outcome == 'success'
       uses: actions/upload-artifact@v3
       with:
         name: DevopsTakeHomePackage
-        path: DevopsTakeHomePackage
+        path: DevopsTakeHome/evopsTakeHomePackage
