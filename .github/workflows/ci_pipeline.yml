@@ -9,9 +9,13 @@ on:
   pull_request:
     branches: [ "master" ]
 
+defaults:
+  run:
+    working-directory: web
+  
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -26,6 +30,30 @@ jobs:
     
     - name: Build
       run: dotnet build --no-restore
-    
+  
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --verbosity normal
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Create package
+      run: dotnet publish -c Release -o DevopsTakeHomePackage
+    
+    - name: Zip the package
+      uses: montudor/action-zip@v1
+      with:
+        args: zip -qq -r DevopsTakeHomePackage.zip DevopsTakeHomePackage
+    
+    - name: Upload zip artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: DevopsTakeHomePackage.zip
+        path: .
+  
