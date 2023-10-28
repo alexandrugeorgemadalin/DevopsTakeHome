@@ -25,31 +25,30 @@ jobs:
       run: dotnet restore
     
     - name: Build
+      id: dotnet-build
       run: dotnet build --no-restore
-  
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
 
     - name: Test
-      run: dotnet test --verbosity normal
+      id: dotnet-test
+      if: always() && steps.dotnet-build.outcome == 'success'
+      run: dotnet test --no-restore --verbosity normal
 
-  publish:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
     - name: Create package
+      id: dotnet-create-package
+      if: always() && steps.dotnet-test.outcome == 'success'
       run: dotnet publish -c Release -o DevopsTakeHomePackage
     
     - name: Zip the package
+      id: zip-package
+      if: always() && steps.dotnet-create-package.outcome == 'success'
       uses: montudor/action-zip@v1
       with:
         args: zip -qq -r DevopsTakeHomePackage.zip DevopsTakeHomePackage
     
     - name: Upload zip artifact
+      id: upload-artifact
+      if: always() && steps.zip-package.outcome == 'success'
       uses: actions/upload-artifact@v3
       with:
         name: DevopsTakeHomePackage
         path: DevopsTakeHomePackage.zip
-  
