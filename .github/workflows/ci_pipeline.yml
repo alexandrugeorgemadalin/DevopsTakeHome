@@ -37,7 +37,7 @@ jobs:
     - name: Create package
       id: dotnet-create-package
       if: always() && steps.dotnet-test.outcome == 'success'
-      run: dotnet publish -c Release --property:PublishDir='./DevopsTakeHomePackage'
+      run: dotnet publish -c Release --property:PublishDir='${{ env.GITHUB_WORKSPACE}}/DevopsTakeHomePackage'
   
     - name: Upload zip artifact
       id: upload-artifact
