@@ -43,7 +43,8 @@ jobs:
     - name: Zip package
       id: zip-package
       if: always() && steps.dotnet-create-package.outcome == 'success'
-      run: zip -r ${{ github.workspace}}/DevopsWebApp.zip ${{ github.workspace }}/DevopsTakeHomePackage
+      run: zip -r ${{ github.workspace}}/DevopsWebApp.zip ./*
+      working-directory: ${{ github.workspace }}/DevopsTakeHomePackage
 
     - name: Configure AWS Credentials
       id: configure-aws
@@ -56,4 +57,4 @@ jobs:
 
     - name: Copy package to S3
       if: always() && steps.configure-aws.outcome == 'success'
-      run: aws s3 cp ${{ github.workspace}}/DevopsWebApp.zip s3://${{ vars.AWS_BUCKET }}/
+      run: aws s3 cp DevopsWebApp.zip s3://${{ vars.AWS_BUCKET }}/
